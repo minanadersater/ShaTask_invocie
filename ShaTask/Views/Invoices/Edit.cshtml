@@ -1,0 +1,137 @@
+﻿@model ShaTask.Models.InvoiceHeader
+
+@{
+    ViewData["Title"] = "Edit";
+}<br />
+<h1>Edit Invoice</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-8">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="ID" />
+            <div class="form-group">
+                <label asp-for="CustomerName" class="control-label">Customer Name</label>
+                <input asp-for="CustomerName" class="form-control" />
+                <span asp-validation-for="CustomerName" class="text-danger"></span>
+            </div>
+            <br />
+            <div class="form-group">
+                <label asp-for="Invoicedate" class="control-label">Date</label>
+                <input asp-for="Invoicedate" class="form-control" />
+                <span asp-validation-for="Invoicedate" class="text-danger"></span>
+            </div>
+            <br />
+            <div class="form-group">
+                <label asp-for="CashierID" class="control-label">Cashier</label>
+                <select asp-for="CashierID" class="form-control" asp-items="ViewBag.CashierID"></select>
+                <span asp-validation-for="CashierID" class="text-danger"></span>
+            </div>
+            <br />
+            <div class="form-group">
+                <label asp-for="BranchID" class="control-label">Branch</label>
+                <select asp-for="BranchID" class="form-control" asp-items="ViewBag.BranchID"></select>
+                <span asp-validation-for="BranchID" class="text-danger"></span>
+            </div>
+            <br />
+            <div>
+            <h4>Items Detailes</h4>
+            <button type="button" class="btn btn-success" id="addDetail">Add Item</button>
+                <table id="invoiceDetailsTable" class="table table-striped">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>
+                            <span>ID</span>
+                        </th>
+                        <th>
+                            <span>Item Name</span>
+                        </th>
+                        <th>
+                            <span>Item Price</span>
+                        </th>
+                        <th>
+                            <span>Item Count</span>
+                        </th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody >
+                    @for (int i = 0; i < Model.InvoiceDetails.Count; i++)
+                    {
+                        <tr>
+                            <input type="hidden" asp-for="InvoiceDetails[i].ID" />
+                            <td><span>@Html.DisplayFor(model => model.InvoiceDetails[i].ID)</span></td>
+                            <td><input asp-for="InvoiceDetails[i].ItemName" class="form-control"></td>
+                            <td><input asp-for="InvoiceDetails[i].ItemPrice" class="form-control"></td>
+                            <td><input asp-for="InvoiceDetails[i].ItemCount" class="form-control"></td>
+                            <td>
+                                    
+
+                            </td>
+                        </tr>
+                        
+                    }
+                </tbody>
+            </table>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+                <a asp-action="Index" class="btn btn-warning">Back to List</a>
+            </div>
+        </form>
+        <br />
+    </div>
+    <div class="col-md-4 form-inline">
+        <form asp-action="Delete" asp-controller="InvoiceDetails" method="POST">
+            <h4>Enter The Item ID To Delete</h4>
+            <div class="row">
+                <div class="col">
+                    <input type="number" asp-for="ID" value="0" class="form-control" />
+                </div>
+                <div class="col">
+                    <input type="submit" value="Delete" class="btn btn-danger">
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        $(document).ready(function () {
+            $('#addDetail').on('click', function () {
+                var newIndex = $('#invoiceDetailsTable tbody tr').length;
+
+                var newItemHtml = `
+            <tr>
+                <td>
+                    <span>#</span>
+                </td>
+                <td>
+                    <input class="form-control" type="text" data-val="true" data-val-length="The field ItemName must be a string with a maximum length of 200." data-val-length-max="200" data-val-required="The ItemName field is required." id="InvoiceDetails_${newIndex}__ItemName" maxlength="200" name="InvoiceDetails[${newIndex}].ItemName">
+                </td>
+                <td>
+                    <input class="form-control" type="number" data-val="true" data-val-number="The field ItemPrice must be a number." data-val-required="The ItemPrice field is required." id="InvoiceDetails_${newIndex}__ItemPrice" name="InvoiceDetails[${newIndex}].ItemPrice">
+                </td>
+                <td>
+                    <input class="form-control" type="number" data-val="true" data-val-number="The field ItemCount must be a number." data-val-required="The ItemCount field is required." id="InvoiceDetails_${newIndex}__ItemCount" name="InvoiceDetails[${newIndex}].ItemCount">
+                </td>
+                <td>
+                    <button type="button" class="btn btn-danger" onclick="removeRow(this)">Remove</button>
+                </td>
+            </tr>
+        `;
+
+                $('#invoiceDetailsTable tbody').append(newItemHtml);
+            });
+        });
+        function removeRow(button) {
+            $(button).closest('tr').remove();
+        }
+    </script>
+}

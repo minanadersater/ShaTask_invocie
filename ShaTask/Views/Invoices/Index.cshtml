@@ -1,0 +1,80 @@
+﻿@model IEnumerable<ShaTask.Models.InvoiceHeader>
+
+@{
+    ViewData["Title"] = "Index";
+}
+<br />
+<h1>Invoices</h1>
+
+<p>
+    <a class="btn btn-outline-primary" asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead class="thead-dark">
+        <tr>
+            <th>
+                <span>ID</span>
+            </th>
+            <th>
+                <span>Customer Name</span>
+            </th>
+            <th>
+                <span>Date</span>
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Branch)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Cashier)
+            </th>
+            <th>
+                <span>Items</span>
+            </th>
+            <th>
+                <span>Total</span>
+            </th>
+            <th>
+                <span>Actions</span>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+    var products = string.Empty;double totalPrice = 0;
+    foreach (var product in item.InvoiceDetails)
+    {
+        products += $"{product.ItemName} - Q: {product.ItemCount} <br>";
+        totalPrice += product.ItemCount * product.ItemPrice;
+    }
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.ID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CustomerName)
+            </td>
+            <td>
+                @{var dateOnly = item.Invoicedate.ToString("yyyy-MM-dd");}
+                <p>@dateOnly</p>
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Branch.BranchName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Cashier.CashierName)
+            </td>
+            <td>
+                <p>@Html.Raw(products)</p>    
+            </td>
+            <td>
+                <p>@totalPrice LE</p>    
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.ID" class="btn text-primary" title="Edit"><i class="fa-regular fa-pen-to-square fa-xl"></i></a>
+                <a asp-action="Details" asp-route-id="@item.ID" class="btn text-warning" title="Details"><i class="fa-solid fa-circle-info fa-xl"></i></a>
+                <a asp-action="Delete" asp-route-id="@item.ID" class="btn text-danger" title="Delete"><i class="fa-solid fa-trash-can fa-xl"></i></a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
